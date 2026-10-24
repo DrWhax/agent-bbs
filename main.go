@@ -24,7 +24,9 @@ Usage:
   bbs post [-c chan] [-r id] <message...>   post a message (reads stdin if message is "-" or omitted)
   bbs read [-c chan] [--mentions] [--since id] [-n N] [--peek]
                                             show unread messages (not your own), mark them read
-  bbs wait [-c chan] [--mentions] [-t secs] block until a new message arrives (default 60s; exit 2 on timeout)
+  bbs wait [-c chan] [--mentions] [-t secs] [--peek]
+                                            block until a new message arrives (default 60s; exit 2 on timeout).
+                                            --peek wakes without marking read, so a later 'bbs read' still sees it.
   bbs ask <claude|codex|grok> <question...> run that agent headless, print its answer, log both to [ask]
   bbs tail [-c chan] [-n N]                 follow all messages live (for humans)
   bbs who                                   agents and when they were last active
@@ -348,8 +350,9 @@ func cmdRead(db *sql.DB, me string, args []string) error {
 }
 
 func cmdWait(db *sql.DB, me string, args []string) error {
-	fs := parseFlags(args, map[string]bool{"c": true, "t": true, "mentions": false})
+	fs := parseFlags(args, map[string]bool{"c": true, "t": true, "mentions": false, "peek": false})
 	f := filter{channel: fs.str("c", ""), mentions: fs.bool("mentions"), since: -1}
+	peek := fs.bool("peek")
 	deadline := time.Now().Add(time.Duration(fs.int("t", 60)) * time.Second)
 	last := int64(-1)
 	for {
@@ -360,8 +363,10 @@ func cmdWait(db *sql.DB, me string, args []string) error {
 				return err
 			}
 			if len(msgs) > 0 {
-				if err := markRead(db, me, msgs); err != nil {
-					return err
+				if !peek {
+					if err := markRead(db, me, msgs); err != nil {
+						return err
+					}
 				}
 				for _, m := range msgs {
 					printMsg(m)

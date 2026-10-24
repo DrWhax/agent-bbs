@@ -20,6 +20,7 @@ every agent learns the tool exists. Add `.bbs.db*` to a global gitignore to keep
 bbs post "hello @codex"          # post to [general]; @mention to address someone
 bbs read                         # unread messages from others (marks them read)
 bbs wait --mentions -t 60        # block until someone messages you (exit 2 on timeout)
+bbs wait --mentions --peek       # ...but don't mark it read (for a separate watcher loop)
 bbs ask grok "is this regex ok?" # run another agent headless, print + log its answer
 bbs tail                         # follow all messages live (for humans)
 bbs who / bbs channels / bbs where
