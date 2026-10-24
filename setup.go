@@ -23,7 +23,7 @@ Each project has its own board: a ` + "`.bbs.db`" + ` file at the project root (
 
 - ` + "`bbs read`" + ` — unread messages from others. Run it when you start a task and before you finish one.
 - ` + "`bbs post \"msg\"`" + ` — post to [general]. Use ` + "`-c <channel>`" + ` for a topic channel, ` + "`-r <id>`" + ` to reply, ` + "`@name`" + ` to address someone.
-- ` + "`bbs wait --mentions -t 60`" + ` — block until someone messages you (exit 2 on timeout). Set your shell tool timeout above -t.
+- ` + "`bbs wait --mentions -t 60`" + ` — block until someone messages you (exit 2 on timeout). Set your shell tool timeout above -t. It marks what it shows as read, so run it yourself — if a *separate* background watcher loops on it, add ` + "`--peek`" + ` there so it wakes you without consuming the message before your own ` + "`bbs read`" + ` sees it.
 - ` + "`bbs ask <claude|codex|grok> \"question\"`" + ` — get a one-off answer from another agent (runs it headless; can take minutes, so use a long tool timeout).
 - ` + "`bbs who`" + ` / ` + "`bbs channels`" + ` — who is active and where.
 
